@@ -1,0 +1,98 @@
+<html>
+<head>
+  <title>Arduino-Google Earth API Collaboration</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="http://code.jquery.com/jquery.min.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"> </script>
+  <script type="text/javascript">
+		var ge;
+		google.load("earth", "1", {"other_params":"sensor=true_or_false"});
+
+		function init() {
+		  google.earth.createInstance('map3d', initCB, failureCB);
+		}
+
+		function initCB(instance) {
+		  ge = instance;
+		  ge.getWindow().setVisibility(true);
+		  ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
+		  ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
+		  ge.getLayerRoot().enableLayerById(ge.LAYER_BUILDINGS, true);
+
+		  var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+		  lookAt.setLatitude(35.41);
+		  lookAt.setLongitude(139.45);
+		  lookAt.setRange(1000000);
+		  ge.getView().setAbstractView(lookAt);	
+
+ 		  //default showing
+		  $('#latitude').val(35.41);
+		  $('#longitude').val(139.45);
+		  $('#range').val("1,000,000");
+		  $('#heading').val(0);
+		  $('#tilt').val(0);
+		  $('#direction').val("N(北)");
+
+		  $('#position_str').css("font-weight", "bold");
+		  $('.data-box-position').css("background-color", "skyblue");
+			
+
+		}
+
+		function failureCB(errorCode) {
+		}
+		google.setOnLoadCallback(init);
+	</script>
+	<script src="js/scripts.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div id="map3d" style="height: 500px; width: 650px;"></div>
+ 
+  <div id="data-box">
+
+  <div class="data-box-position">	
+	<span id="position_str">Position：</span><br>
+	Latitude <input type="text" id="latitude" readonly="readonly" >  
+	Longitude <input type="text" id="longitude" readonly="readonly" > <br>
+	Range <input type="text" id="range" readonly="readonly" >m
+  </div>
+
+  <div class="data-box-heading">
+	<span id="heading_str">Direction：</span> <input type="text" id="direction" readonly="readonly" >
+	Heading： <input type="text" id="heading" readonly="readonly" >
+  </div>
+
+  <div class="data-box-tilt">
+	<span id="tilt_str">Tilt：</span> <input type="text" id="tilt" readonly="readonly" >
+  </div>
+
+  <div class="data-box-color">	
+	<span id="color_str">"Background Color：</span><br>
+	<div class="color1"></div> <div class="color2"></div> <div class="color3"></div> <div class="color4"></div>
+  </div>
+
+  <div class="data-box-ctrl">
+  <input type ="button" id = "default" value="default"/>
+  <input type ="button" id = "west"  value="west"/>
+  <input type ="button" id = "east" value="east"/>
+  <input type ="button" id = "north" value="north"/>
+  <input type ="button" id = "south"  value="south"/>
+
+
+  <p><input type ="button" id = "Zoomin" value="Zoom In"/>
+  <input type ="button" id = "Zoomout"  value="Zoom Out"/>
+  <input type ="button" id = "Tiltup"  value="Tiltup"/>
+  <input type ="button" id = "Tiltdown"  value="Tiltdown"/><br>
+  <input type ="button" id = "Clockwise"  value="Clockwise"/>
+  <input type ="button" id = "CounterClockwise"  value="CounterClockwise"/>
+</p>
+
+ <p>
+	AngleX <input type="text" id="angleX" readonly="readonly" >  AngleY <input type="text" id="angleY" readonly="readonly" > 
+ </p>
+ </div>
+
+ </div>
+</body>
+</html>

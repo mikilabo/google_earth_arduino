@@ -1,0 +1,84 @@
+/************************
+-----html5------
+************************/
+
+body {
+background-color: snow;
+}
+
+#map3d {
+	float: left;
+}
+
+#data-box {
+	float: left;
+}
+
+.data-box-position, .data-box-heading, 
+.data-box-tilt, .data-box-color, .data-box-ctrl {
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-bottom: 20px;
+	padding: 5px 5px 5px 5px;
+	border: 3px;
+	border-style: solid;
+}
+.data-box-color{
+	height: 60px;
+}
+
+#latitude{
+	width: 70px;
+	margin-right: 30px;
+}
+#longitude{
+	width: 70px;
+}
+#range{
+	width: 100px;
+}
+
+#direction{
+	width: 60px;
+	margin-right: 30px;
+}
+#heading{
+	width: 60px;
+}
+#tilt{
+	width: 50px;
+}
+
+#angleX{
+	width: 70px;
+	margin-right: 30px;
+}
+#AngleY{
+	width: 70px;
+}
+
+
+.color1, .color2, .color3, .color4 {
+	width:30px; height:30px;
+	border: 2px;
+	border-style:solid;
+	solid: black;
+	margin-right:3px;
+	background-color:snow;
+	float: left;
+} 
+.color2{
+	border: 1px;
+	background-color:red;
+	border-style:none;
+}
+.color3{
+	border: 1px;
+	background-color:green;
+	border-style:none;
+}
+.color4{
+	border: 1px;
+	background-color:blue;
+	border-style:none;
+}

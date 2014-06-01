@@ -1,0 +1,1 @@
+/Users/miki/Documents/Arduino/mpu6050_earth/mpu6050_earth.ino

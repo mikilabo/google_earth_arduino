@@ -1,0 +1,247 @@
+
+
+$(function(){
+	var socket = io.connect();
+
+	//Angle data from server
+    socket.on('emit_from_server', function(data){
+        //console.log("length : " + data);
+		var angleX = JSON.parse(data).accXangle;
+		var angleY = JSON.parse(data).accYangle;
+
+        $('#angleX').val(angleX);
+        $('#angleY').val(angleY);
+
+		ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_ABSOLUTE);
+		//var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		var latitude = lookAt.getLatitude();
+		var longitude = lookAt.getLongitude();
+		var range    = lookAt.getRange();
+
+		//console.log("angleX:" + angleX + " angleY:" + angleY );
+		//console.log("A la: " + latitude + " lo;" + longitude + " ra:" + range );
+
+		var factor = getMoveScale(range);
+		//console.log("factor = " + factor );
+
+	
+		console.log("heading = " + lookAt.getHeading() );
+
+		//X Angle
+		var xFlag = -1;
+		if(angleX < 0){
+			xFlag = 1;
+		}
+		angleX = Math.abs(angleX);
+		if( angleX < 5 ){
+			latitude = latitude ;
+		}else if( angleX < 15){
+			latitude = latitude + (factor * 0.5 * xFlag) ;
+		}else if( angleX < 35){
+			latitude = latitude + (factor * 1.0 * xFlag) ;
+		}else if( angleX < 60){
+			latitude = latitude + (factor * 2.0 * xFlag) ;
+		}else{
+			latitude = latitude + (factor * 5.0 * xFlag) ;
+		}
+
+		//Y Angle
+		var yFlag = -1;
+		if(angleY < 0){
+			yFlag = 1;
+		}
+		angleY = Math.abs(angleY);
+		if( angleY < 5 ){
+			longitude = longitude ;
+		}else if( angleY < 15){
+			longitude = longitude + (factor * 0.5 * yFlag) ;
+		}else if( angleY < 35){
+			longitude = longitude + (factor * 1.0 * yFlag) ;
+		}else if( angleY < 60){
+			longitude = longitude + (factor * 2.0 * yFlag) ;
+		}else{
+			longitude = longitude + (factor * 5.0 * yFlag) ;
+		}
+		//西に移動して経度が-180以下になった場合の微調整,
+ 	    //東に移動して180を超えた場合は自動で-180になるらしい…
+		if( longitude < -180 ){
+			longitude = 180 + (longitude+180)
+			//console.log("new longitude = " + longitude);
+		}
+	
+		/*	
+		console.log("B la: " + latitude + " lo:" + longitude +
+					" ra:" + range );
+		*/
+
+		// Update the view in Google Earth.
+		lookAt.setLatitude(latitude);
+		lookAt.setLongitude(longitude);
+		lookAt.setRange(range);
+		ge.getView().setAbstractView(lookAt);
+
+		/* for DEBUG */
+/***
+		//var lookAt2 = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+		var lookAt2 = ge.getView().copyAsLookAt(ge.ALTITUDE_ABSOLUTE);
+		var latitude2 = lookAt2.getLatitude();
+		var longitude2 = lookAt2.getLongitude();
+		var range2    = lookAt2.getRange();
+		console.log("C la: " + latitude2 + " lo:" + longitude2 +
+					" ra:" + range2 );
+***/
+    });
+
+
+	$('#default').click(function() {
+		console.log(ge.getView());
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		//Back To Tokyo
+      	lookAt.setLatitude(35.41);
+	    lookAt.setLongitude(139.45);
+	    lookAt.setTilt(0);
+	    lookAt.setHeading(0);
+
+		lookAt.setRange( 1000000 );
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+
+  	});
+	$('#east').click(function() {
+		ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// Add 25 degrees to the current latitude and longitude values.
+		lookAt.setLongitude(lookAt.getLongitude() + 25.0);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+
+  	});
+	$('#west').click(function() {
+		ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// Add 25 degrees to the current latitude and longitude values.
+		lookAt.setLongitude(lookAt.getLongitude() - 25.0);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+	$('#north').click(function() {
+		ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// Add 25 degrees to the current latitude 
+		lookAt.setLatitude(lookAt.getLatitude() + 25.0);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+
+  	});
+	$('#south').click(function() {
+		ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		lookAt.setLatitude(lookAt.getLatitude() - 25.0);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+
+
+	$('#Zoomin').click(function() {
+		// Get the current view.
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// Zoom out to twice the current range.
+		lookAt.setRange(lookAt.getRange() * 0.5);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+
+  	});
+	$('#Zoomout').click(function() {
+		// Get the current view.
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// Zoom out to twice the current range.
+		lookAt.setRange(lookAt.getRange() * 2.0);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+	$('#Tiltup').click(function() {
+		// Get the current view.
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// setTilt
+		lookAt.setTilt(lookAt.getTilt() - 30);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+	$('#Tiltdown').click(function() {
+		// Get the current view.
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// setTilt
+		lookAt.setTilt(lookAt.getTilt() + 30);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+	$('#Clockwise').click(function() {
+		// Get the current view.
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// setTilt
+		lookAt.setHeading(lookAt.getHeading() - 20);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+	$('#CounterClockwise').click(function() {
+		// Get the current view.
+		var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
+
+		// setTilt
+		lookAt.setHeading(lookAt.getHeading() + 20);
+
+		// Update the view in Google Earth.
+		ge.getView().setAbstractView(lookAt);
+  	});
+
+
+	/**
+	 * 移動量のファクターをrangeから決める
+	 */	
+	function getMoveScale( range){
+			if( range < 1000 ){
+				return 0.00005;
+			}else if( range < 5000 ){
+				return 0.0001;
+			}else if( range < 10000 ){
+				return 0.0003;
+			}else if( range < 30000 ){
+				return 0.0007;
+			}else if( range < 50000 ){
+				return 0.001;
+			}else if( range < 150000 ){
+				return 0.01;
+			}else if( range < 750000 ){
+				return 0.1;
+			}else if( range < 1500000 ){
+				return 0.5;
+			}
+			return 1;
+	}
+});
+
+
