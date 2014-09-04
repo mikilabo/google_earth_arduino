@@ -11,7 +11,7 @@ io.set('log level', 1);
 // Serial Port
 var portName = '/dev/cu.usbserial-AD0267I2'; // My Mac environment
 var sp = new serialport.SerialPort(portName, {
-    baudRate: 57600,
+    baudRate: 38400,
     parser: serialport.parsers.readline("\n"),
     dataBits: 8,
     parity: 'none',
@@ -63,6 +63,7 @@ function handler(req, res){
 }
 
 //data from serialport(arduino)
+//加速度計からのデータ入力
 sp.on('data', function(data) {
 	console.log('serialpor data received: ' + data);
 	try{

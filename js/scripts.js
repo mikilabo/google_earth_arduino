@@ -546,6 +546,7 @@ $(function(){
   	});
 
 
+
 	/**
 	 * getting move amount from range
 	 */	
